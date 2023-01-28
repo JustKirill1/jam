@@ -40,3 +40,11 @@ def whatIsNumber(dolg):
     if 8 <= number:
         b = str(int(dolg / int(1000 ** 8))) + ' септилион' + ending
     return b
+def dayCounting(timeType, timeAmount):
+    if timeType.value == 'Года':
+        time_count = float(timeAmount.value) * 365.25
+    if timeType.value == 'Месяцы':
+        time_count = float(timeAmount.value) * 30.4375
+    if timeType.value == 'Дни':
+        time_count = float(timeAmount.value)
+    return time_count
