@@ -49,6 +49,6 @@ if __name__ == '__main__':
         #Кнопка назад
 
 
-        page.add(percentageField, time_type,time_ammount, btn) #Изначальное создание приложения
+        page.add(percentageField, ft.Container(content=time_type,width=800),time_ammount, btn) #Изначальное создание приложения
 
     ft.app(target=main) #Запуск говна
