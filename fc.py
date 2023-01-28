@@ -1,9 +1,5 @@
-# Тут всякое говно можно удалять/изменять
 from collections import Counter
-
-huy = 1000000000
 def whatIsNumber(dolg):
-
     a = dict(Counter("{:,}".format(dolg)))
     if ',' in a:
         number = a[',']
@@ -44,4 +40,3 @@ def whatIsNumber(dolg):
     if 8 <= number:
         b = str(int(dolg / int(1000 ** 8))) + ' септилион' + ending
     return b
-print(whatIsNumber(huy))
