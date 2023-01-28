@@ -19,7 +19,7 @@ if __name__ == '__main__':
         def btn_click(e):
 
                 time_count = fc.dayCounting(time_type, time_ammount)  #Здесь вычисляется окличество дней
-                percentage = int(percentageField.value) #Процент долга
+                percentage = float(percentageField.value) #Процент долга
                 inflation = int(0.1198 / 365.25 * time_count * 10000) / 100  # Вычисление инфляции
                 inflationPerDay = 0.1198 / 365.25 * time_count #Инфляция в день
                 debt = int(1500 * ((100 + percentage)/100) * 1.01 ** time_count + 1500 * ((100 + percentage)/100) * inflationPerDay)  # Вычисление долга с инфляцией
@@ -29,14 +29,18 @@ if __name__ == '__main__':
                 ezNumber = fc.whatIsNumber(debt) #нахождение названия числа
 
                 page.clean() #Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.Text("Ваш дебитор должен вам:", size=30),
+                    ft.Text(f"Дней с начала: {time_count}"),
+                    ft.Text(f"Долг: {debtFormat} руб. ({ezNumber}, (~10^{debtLog})"),
+                    ft.Text(f"Долг без инфляции: {debt_without_inflation}"),
+                    ft.Text(f"Инфляция: {inflation}"),
+                    ft.FilledButton(text='Go back', on_click=go_back,width=400)])
+                ], alignment = ft.MainAxisAlignment.CENTER)
 
-                t1 = ft.Text(f"Дней с начала: {time_count}")
-                t2 = ft.Text(f"Долг: {debtFormat} руб. ({ezNumber}, (~10^{debtLog})")
-                t3 = ft.Text(f"Долг без инфляции: {debt_without_inflation}")
-                t4 = ft.Text(f"Инфляция: {inflation}")
+                page.add(Card)
 
-                page.add(t1,t2,t3,t4)
-                page.add(ft.ElevatedButton(text='Go back', on_click=go_back))
                 #Добавляем текст и кнопку
 
         btn = ft.ElevatedButton(text="Готово", on_click=btn_click)
@@ -45,10 +49,20 @@ if __name__ == '__main__':
 
         def go_back(e):
             page.clean()
-            page.add(percentageField, time_type, time_ammount, btn)
+            create_start()
         #Кнопка назад
 
-
-        page.add(percentageField, time_type,time_ammount, btn) #Изначальное создание приложения
+        def create_start():
+            page.add(
+                    ft.ListView(
+                        [ft.Row(controls=[ft.Text("Введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                        ft.Container(percentageField,padding=5),
+                        ft.Container(content=time_type,width=800,padding=5),
+                        ft.Container(time_ammount, padding=5),
+                        ft.Container(btn,padding=2),
+                         ],
+                    )
+        ) #Изначальное создание приложения
+        create_start()
 
     ft.app(target=main) #Запуск говна
