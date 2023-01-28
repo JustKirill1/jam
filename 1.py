@@ -1,3 +1,4 @@
+#брутфорсинг хеша :)
 from Crypto.Cipher import AES
 from Crypto import Random
 import hashlib
