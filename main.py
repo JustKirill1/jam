@@ -15,7 +15,7 @@ def main(page: ft.Page):
     )
     time_ammount = ft.TextField(hint_text='Введите количество')
     #Создаю текстовые поля
-
+    я ебал
     def btn_click(e):
             inf = int(perc.value)
             if time_type.value == 'Года':
