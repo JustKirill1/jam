@@ -40,9 +40,6 @@ if __name__ == '__main__':
                 ], alignment = ft.MainAxisAlignment.CENTER)
 
                 page.add(Card)
-
-                page.add(t1,t2,t3,t4)
-                page.add(ft.ElevatedButton(text='Go back', on_click=go_back))
                 #Добавляем текст и кнопку
 
         btn = ft.ElevatedButton(text="Готово", on_click=btn_click)
