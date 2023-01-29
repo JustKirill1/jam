@@ -1,4 +1,6 @@
 from collections import Counter
+import datetime
+
 def whatIsNumber(dolg):
     a = dict(Counter("{:,}".format(dolg)))
     if ',' in a:
@@ -48,3 +50,5 @@ def dayCounting(timeType, timeAmount):
     if timeType.value == 'Дни':
         time_count = float(timeAmount.value)
     return time_count
+def get_days(date1, date2):
+    return (date2 - date1).days
