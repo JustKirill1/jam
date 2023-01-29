@@ -1,11 +1,12 @@
-
 import flet as ft
 import math
 import fc
+
 if __name__ == '__main__':
     def main(page: ft.Page):
+        page.title = "Вычисление долга"
         percentageField = ft.TextField(hint_text='Под какой процент взяли?')
-        time_type = ft.Dropdown(
+        timeType = ft.Dropdown(
             label='Дни, Месяцы, Года',
             width=100,
             options=[
@@ -14,11 +15,21 @@ if __name__ == '__main__':
                 ft.dropdown.Option("Года"),
             ],
         )
+        timeVariance = ft.Dropdown(
+            label='Количество дней / От даты к дате',
+            width=100,
+            options=[
+                ft.dropdown.Option("Количество дней"),
+                ft.dropdown.Option("От даты к дате"),
+            ],
+        )
+
         time_ammount = ft.TextField(hint_text='Введите количество')
+
         #Создание текстовые поля
         def btn_click(e):
 
-                time_count = fc.dayCounting(time_type, time_ammount)  #Здесь вычисляется окличество дней
+                time_count = fc.dayCounting(timeType, time_ammount)  #Здесь вычисляется окличество дней
                 percentage = float(percentageField.value) #Процент долга
                 inflation = int(0.1198 / 365.25 * time_count * 10000) / 100  # Вычисление инфляции
                 inflationPerDay = 0.1198 / 365.25 * time_count #Инфляция в день
@@ -56,9 +67,11 @@ if __name__ == '__main__':
                     ft.ListView(
                         [ft.Row(controls=[ft.Text("Введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
                         ft.Container(percentageField,padding=5),
-                        ft.Container(content=time_type,width=800,padding=5),
+                        ft.Container(content=timeVariance,width=800,padding=5),
+                        ft.Container(content=timeType,width=800,padding=5),
                         ft.Container(time_ammount, padding=5),
                         ft.Container(btn,padding=2),
+
                          ],
                     )
         ) #Изначальное создание приложения
