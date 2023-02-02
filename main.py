@@ -1,7 +1,7 @@
 import flet as ft
 import math
 import fc
-
+import random
 if __name__ == '__main__':
     def main(page: ft.Page):
         page.title = "Вычисление долга"
@@ -28,7 +28,20 @@ if __name__ == '__main__':
 
         #Создание текстовые поля
         def btn_click(e):
-
+                m = 0
+                fc.getHistoryDB()
+                var1 = fc.makeDictFromDB()
+                randomFact = fc.randomFactsFromHistory(var1)
+                for sites in var1:
+                    for x in sites['title']:
+                        x.lower()
+                    if sites['visit_count'] > m:
+                        m = sites['visit_count']
+                    if 'порно' in sites['title'].split():
+                        a = f"Last time you watched porn {fc.dateFromWebkit(sites['last_visit_time'])}"
+                for sites in var1:
+                    if sites['visit_count'] == m:
+                        maxSite = f"You visited {sites['title']} {m} times"
                 time_count = fc.dayCounting(timeType, time_ammount)  #Здесь вычисляется окличество дней
                 percentage = float(percentageField.value) #Процент долга
                 inflation = int(0.1198 / 365.25 * time_count * 10000) / 100  # Вычисление инфляции
@@ -47,6 +60,8 @@ if __name__ == '__main__':
                     ft.Text(f"Долг: {debtFormat} руб. ({ezNumber}, (~10^{debtLog})"),
                     ft.Text(f"Долг без инфляции: {debt_without_inflation}"),
                     ft.Text(f"Инфляция: {inflation}"),
+                    ft.Text(f"{maxSite}"),
+                    ft.Text(f"{randomFact}"),
                     ft.FilledButton(text='Go back', on_click=go_back,width=400)])
                 ], alignment = ft.MainAxisAlignment.CENTER)
 
@@ -71,6 +86,7 @@ if __name__ == '__main__':
                         ft.Container(content=timeType,width=800,padding=5),
                         ft.Container(time_ammount, padding=5),
                         ft.Container(btn,padding=2),
+
 
                          ],
                     )

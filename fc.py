@@ -1,6 +1,10 @@
 from collections import Counter
 import datetime
-
+import sqlite3 as sql
+import datetime
+import shutil
+import os
+import random
 def whatIsNumber(dolg):
     a = dict(Counter("{:,}".format(dolg)))
     if ',' in a:
@@ -50,5 +54,31 @@ def dayCounting(timeType, timeAmount):
     if timeType.value == 'Дни':
         time_count = float(timeAmount.value)
     return time_count
-def get_days(date1, date2):
+def getDays(dates):
+    date1, date2 = dates.rsplit(";")
     return (date2 - date1).days
+def dateFromWebkit(webkit_timestamp):
+    epoch_start = datetime.datetime(1601,1,1)
+    delta = datetime.timedelta(microseconds=int(webkit_timestamp))
+    return epoch_start + delta
+def getHistoryDB():
+    original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\History'
+    target = r'F:\pythonProject1\History.db'
+    shutil.copy2(original, target)
+def dictFactory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+def makeDictFromDB():
+    con = sql.connect("History.db")
+    con.row_factory = dictFactory
+    cur = con.cursor()
+    cur.execute("select * from urls")
+    var1 = cur.fetchmany(-1)
+    return var1
+def randomFactsFromHistory(var1):
+    randomSite = random.choice(var1)
+    randomFact = f"Last time you visited {randomSite['title']}, was {dateFromWebkit(randomSite['last_visit_time'])}"
+    return randomFact
+
