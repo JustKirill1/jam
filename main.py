@@ -37,7 +37,7 @@ if __name__ == '__main__':
                         x.lower()
                     if sites['visit_count'] > m:
                         m = sites['visit_count']
-                    if 'порно' in sites['title'].split():
+                    if 'порно' or 'porn' in sites['title'].split():
                         a = f"Last time you watched porn {fc.dateFromWebkit(sites['last_visit_time'])}"
                 for sites in var1:
                     if sites['visit_count'] == m:
@@ -86,7 +86,6 @@ if __name__ == '__main__':
                         ft.Container(content=timeType,width=800,padding=5),
                         ft.Container(time_ammount, padding=5),
                         ft.Container(btn,padding=2),
-
 
                          ],
                     )

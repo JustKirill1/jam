@@ -63,7 +63,7 @@ def dateFromWebkit(webkit_timestamp):
     return epoch_start + delta
 def getHistoryDB():
     original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\History'
-    target = r'F:\pythonProject1\History.db'
+    target = str(os.path.abspath(os.curdir)) + '\History.db'
     shutil.copy2(original, target)
 def dictFactory(cursor, row):
     d = {}
@@ -71,6 +71,7 @@ def dictFactory(cursor, row):
         d[col[0]] = row[idx]
     return d
 def makeDictFromDB():
+
     con = sql.connect("History.db")
     con.row_factory = dictFactory
     cur = con.cursor()
