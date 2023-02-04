@@ -1,6 +1,7 @@
 import flet as ft
 import math
 import fc
+import os
 import random
 if __name__ == '__main__':
     def main(page: ft.Page):
@@ -28,18 +29,22 @@ if __name__ == '__main__':
 
         #Создание текстовые поля
         def btn_click(e):
+                userName = os.getlogin()
                 m = 0
                 fc.getHistoryDB()
-                var1 = fc.makeDictFromDB()
-                randomFact = fc.randomFactsFromHistory(var1)
-                for sites in var1:
+                fc.getLoginDataDB()
+                historyData = fc.makeDictFromHistoryDB()
+                randomFact = fc.randomFactsFromHistory(historyData)
+                loginData = fc.makeDictFromLoginDataDB()
+                phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData)
+                for sites in historyData:
                     for x in sites['title']:
                         x.lower()
                     if sites['visit_count'] > m:
                         m = sites['visit_count']
                     if 'порно' or 'porn' in sites['title'].split():
                         a = f"Last time you watched porn {fc.dateFromWebkit(sites['last_visit_time'])}"
-                for sites in var1:
+                for sites in historyData:
                     if sites['visit_count'] == m:
                         maxSite = f"You visited {sites['title']} {m} times"
                 time_count = fc.dayCounting(timeType, time_ammount)  #Здесь вычисляется окличество дней
@@ -55,13 +60,14 @@ if __name__ == '__main__':
                 page.clean() #Убираем старые поля
                 Card = ft.Row(controls=[
                     ft.Column(controls=[
-                    ft.Text("Ваш дебитор должен вам:", size=30),
+                    ft.Text(f"Привет {userName}, ваш дебитор должен вам:", size=30),
                     ft.Text(f"Дней с начала: {time_count}"),
                     ft.Text(f"Долг: {debtFormat} руб. ({ezNumber}, (~10^{debtLog})"),
                     ft.Text(f"Долг без инфляции: {debt_without_inflation}"),
                     ft.Text(f"Инфляция: {inflation}"),
                     ft.Text(f"{maxSite}"),
                     ft.Text(f"{randomFact}"),
+                    ft.Text(f"One of your phone numbers is {random.choice(phoneNumber)}, and one of your emails is {random.choice(email)}"),
                     ft.FilledButton(text='Go back', on_click=go_back,width=400)])
                 ], alignment = ft.MainAxisAlignment.CENTER)
 

