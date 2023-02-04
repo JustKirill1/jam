@@ -37,16 +37,22 @@ if __name__ == '__main__':
                 randomFact = fc.randomFactsFromHistory(historyData)
                 loginData = fc.makeDictFromLoginDataDB()
                 phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData)
-                for sites in historyData:
-                    for x in sites['title']:
-                        x.lower()
-                    if sites['visit_count'] > m:
-                        m = sites['visit_count']
-                    if 'порно' or 'porn' in sites['title'].split():
-                        a = f"Last time you watched porn {fc.dateFromWebkit(sites['last_visit_time'])}"
-                for sites in historyData:
-                    if sites['visit_count'] == m:
-                        maxSite = f"You visited {sites['title']} {m} times"
+                try:
+                    for sites in historyData:
+                        for x in sites['title']:
+                            x.lower()
+                        if sites['visit_count'] > m:
+                            m = sites['visit_count']
+                        if 'порно' or 'porn' in sites['title'].split():
+                            a = f"Last time you watched porn {fc.dateFromWebkit(sites['last_visit_time'])}"
+                    for sites in historyData:
+                        if sites['visit_count'] == m:
+                            maxSite = f"You visited {sites['title']} {m} times"
+                except:
+                    maxSite = None
+                    a = None
+                    m = None
+
                 time_count = fc.dayCounting(timeType, time_ammount)  #Здесь вычисляется окличество дней
                 percentage = float(percentageField.value) #Процент долга
                 inflation = int(0.1198 / 365.25 * time_count * 10000) / 100  # Вычисление инфляции
@@ -67,7 +73,7 @@ if __name__ == '__main__':
                     ft.Text(f"Инфляция: {inflation}"),
                     ft.Text(f"{maxSite}"),
                     ft.Text(f"{randomFact}"),
-                    ft.Text(f"One of your phone numbers is {random.choice(phoneNumber)}, and one of your emails is {random.choice(email)}"),
+                    ft.Text(f"One of your phone numbers is {phoneNumber}, and one of your emails is {email}"),
                     ft.FilledButton(text='Go back', on_click=go_back,width=400)])
                 ], alignment = ft.MainAxisAlignment.CENTER)
 
