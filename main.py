@@ -4,6 +4,7 @@ import fc
 import os
 import random
 if __name__ == '__main__':
+    m = 0
     def main(page: ft.Page):
         page.title = "Вычисление долга"
         percentageField = ft.TextField(hint_text='Под какой процент взяли?')
@@ -29,14 +30,13 @@ if __name__ == '__main__':
 
         #Создание текстовые поля
         def btn_click(e):
-                userName = os.getlogin()
-                m = 0
-                fc.getHistoryDB()
-                fc.getLoginDataDB()
-                historyData = fc.makeDictFromHistoryDB()
-                randomFact = fc.randomFactsFromHistory(historyData)
-                loginData = fc.makeDictFromLoginDataDB()
-                phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData)
+                userName = os.getlogin() #нахождение имени пользователя
+                fc.getHistoryDB() #инициализация sql таблицы истории
+                fc.getLoginDataDB()  #инициализация sql таблицы логинов
+                historyData = fc.makeDictFromHistoryDB() #Создание словаря из sql таблицы
+                randomFact = fc.randomFactsFromHistory(historyData) #отображение рандомной страницы из истории
+                loginData = fc.makeDictFromLoginDataDB() #создание словаря из sql таблицы логинов
+                phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData) #нахождение номеров телефона и емейла в словаре логинов
                 try:
                     for sites in historyData:
                         for x in sites['title']:
