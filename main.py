@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
         #Создание текстовые поля
         def btnClick(e):
-                global randomUrl, userName
+                global randomUrl
                 m = 0
                 userName = os.getlogin() #нахождение имени пользователя
                 fc.getHistoryDB() #инициализация sql таблицы истории
@@ -88,6 +88,7 @@ if __name__ == '__main__':
         def seeTheLink(e):
             page.launch_url(randomUrl)
         def createStart():
+            userName = os.getlogin()
             page.add(
                     ft.ListView(
                         [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
