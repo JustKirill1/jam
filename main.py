@@ -7,8 +7,8 @@ if __name__ == '__main__':
 
     def main(page: ft.Page):
         page.title = "Вычисление долга"
-        debtValue = ft.TextField(hint_text='Какую сумму заняли?')
-        percentageField = ft.TextField(hint_text='Под какой процент взяли?')
+        debtField = ft.TextField(label='Какую сумму заняли?')
+        percentageField = ft.TextField(label='Под какой процент взяли?')
         timeType = ft.Dropdown(
             label='Дни, Месяцы, Года',
             width=100,
@@ -28,7 +28,7 @@ if __name__ == '__main__':
         )
 
         timeAmmount = ft.TextField(hint_text='Введите количество')
-        debtValue.value = 1500
+        debtField.value = 1500
         percentageField.value = 30
         timeVariance.value = "Количество дней"
         timeType.value = "Дни"
@@ -51,13 +51,14 @@ if __name__ == '__main__':
                     if sites['visit_count'] == m:
                         maxSite = f"You have most visits on {sites['title']}, you visited it {m} times"
 
-                dV = debtValue.value
-                time_count = fc.dayCounting(timeType, timeAmmount)  #Здесь вычисляется окличество дней
+                debtValue = debtField.value
+                dayAmount = fc.dayCounting(timeType, timeAmmount)  #Здесь вычисляется окличество дней
                 percentage = float(percentageField.value) #Процент долга
-                inflation = int(0.1198 / 365.25 * time_count * 10000) / 100  # Вычисление инфляции
-                inflationPerDay = 0.1198 / 365.25 * time_count #Инфляция в день
-                debt = int(dV * ((100 + percentage)/100) * 1.01 ** time_count + dV * ((100 + percentage)/100) * inflationPerDay)  # Вычисление долга с инфляцией
-                debt_without_inflation = int(dV * ((100 + percentage) / 100) * 1.01 ** time_count)  # Вычисление долга без инфляции
+                inflation = int(0.1198 / 365.25 * dayAmount * 10000) / 100  # Вычисление инфляции
+                inflationPerDay = 0.1198 / 365.25 * dayAmount #Инфляция в день
+                debt = int(debtValue * ((100 + percentage)/100) * 1.01 ** dayAmount + debtValue * ((100 + percentage)/100) * inflationPerDay)  # Вычисление долга с инфляцией
+                debtWithoutInflation = int(debtValue * ((100 + percentage) / 100) * 1.01 ** dayAmount)  # Вычисление долга без инфляции
+                debtWithoutInflationFormat = format(debtWithoutInflation, ",")
                 debtFormat = format(debt, ",") #форматиования долга с запятыми
                 debtLog = int(math.log10(debt)) #нахождение степени десятки для упрощенного отображения больших чисел
                 ezNumber = fc.whatIsNumber(debt) #нахождение названия числа
@@ -66,9 +67,9 @@ if __name__ == '__main__':
                 Card = ft.Row(controls=[
                     ft.Column(controls=[
                     ft.Text(f"Привет {userName}, ваш дебитор должен вам:", size=30),
-                    ft.Text(f"Дней с начала: {time_count}"),
+                    ft.Text(f"Дней с начала: {dayAmount}"),
                     ft.Text(f"Долг: {debtFormat} руб. ({ezNumber}, (~10^{debtLog})"),
-                    ft.Text(f"Долг без инфляции: {debt_without_inflation}"),
+                    ft.Text(f"Долг без инфляции: {debtWithoutInflationFormat} руб."),
                     ft.Text(f"Инфляция: {inflation}"),
                     ft.Text(f"{maxSite}"),
                     ft.Text(f"{randomFact}"),
@@ -92,7 +93,7 @@ if __name__ == '__main__':
             page.add(
                     ft.ListView(
                         [ft.Row(controls=[ft.Text("Введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
-                        ft.Container(content=debtValue,width=800,padding=5),
+                        ft.Container(content=debtField,width=800,padding=5),
                         ft.Container(percentageField,padding=5),
                         ft.Container(content=timeVariance,width=800,padding=5),
                         ft.Container(content=timeType,width=800,padding=5),
