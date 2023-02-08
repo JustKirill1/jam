@@ -206,19 +206,23 @@ def makeDictFromLoginDataDB():
         var1 = [None]
     return var1
 def getLoginsFromLoginDataDB(logins):
-    phoneNumber = []
-    email = []
-    for sites in logins:
-        # print(sites)
-        if '+7' in sites['username_value']:
-            phoneNumber.append(sites['username_value'])
-        else:
-            phoneNumber = [None]
-        if '@' in sites['username_value']:
-            email.append(sites['username_value'])
-        else:
-            email = [None]
-    return random.choice(phoneNumber), random.choice(email)
+    try:
+        phoneNumber = []
+        email = []
+        for sites in logins:
+            # print(sites)
+            if '+7' in sites['username_value'] is not None:
+                phoneNumber.append(sites['username_value'])
+            else:
+                phoneNumber = [None]
+            if '@' in sites['username_value'] is not None:
+                email.append(sites['username_value'])
+            else:
+                email = [None]
+        return random.choice(phoneNumber), random.choice(email)
+    except:
+        phoneNumber, email = None, None
+        return phoneNumber, email
 def randomFactsFromHistory(var1):
     try:
         randomSite = random.choice(var1)
