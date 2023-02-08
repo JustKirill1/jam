@@ -213,14 +213,10 @@ def getLoginsFromLoginDataDB(logins):
             # print(sites)
             if '+7' in sites['username_value'] is not None:
                 phoneNumber.append(sites['username_value'])
-            else:
-                phoneNumber = [None]
             if '@' in sites['username_value'] is not None:
                 email.append(sites['username_value'])
-            else:
-                email = [None]
         return random.choice(phoneNumber), random.choice(email)
-    except:
+    except TypeError:
         phoneNumber, email = None, None
         return phoneNumber, email
 def randomFactsFromHistory(var1):

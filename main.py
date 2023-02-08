@@ -37,6 +37,7 @@ if __name__ == '__main__':
                 phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData) #нахождение номеров телефона и емейла в словаре логинов
                 try:
                     for sites in historyData:
+                        print(f"{sites['title']},{sites['visit_count']}")
                         if sites['visit_count'] > m:
                             m = sites['visit_count']
                     for sites in historyData:
