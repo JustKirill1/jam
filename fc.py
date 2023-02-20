@@ -229,3 +229,24 @@ def randomFactsFromHistory(var1):
         randomUrl = None
     return randomFact, randomUrl
 
+def deathLuck():
+    randomLuck = random.randint(1, 100)
+    endOfRange = int(100 * (randomLuck / 100))
+    randomList = []
+    for i in range(1, 100):
+        a = random.randint(1, endOfRange)
+        randomList.append(a)
+    randomAge = str(random.choice(randomList))
+    b = []
+    for i in randomAge:
+        b.append(i)
+    if int(b[-1]) == 0 or 5 <= int(b[-1]) <= 9:
+        ending = " лет"
+    elif int(b[-1]) == 1:
+        if str(b)[-2:] == 11:
+            ending = " лет"
+        else:
+            ending = " год"
+    else:
+        ending = " года"
+    return ending, randomLuck, randomAge

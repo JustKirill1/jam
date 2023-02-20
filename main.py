@@ -9,22 +9,7 @@ import os
 
 
 if __name__ == '__main__':
-    randomLuck = random.randint(1,100)
-    endOfRange = 100 * (randomLuck/100)
-    randomList = []
-    for i in range(1, 100):
-        a = random.randint(1,endOfRange)
-        randomList.append(a)
-    randomAge = str(random.choice(randomList))
-    b = []
-    for i in randomAge:
-        b.append(i)
-    if int(b[-1]) == 0 or 5 <= int(b[-1]) <= 9:
-        ending = " лет"
-    elif int(b[-1]) == 1:
-        ending = " год"
-    else:
-        ending = " года"
+    ending, randomLuck, randomAge = fc.deathLuck()
     def main(page: ft.Page):
         def firstApp(e):
             page.clean()
@@ -92,6 +77,14 @@ if __name__ == '__main__':
                         ft.Text(f"{maxSite}"),
                         ft.Text(f"{randomFact} (UTC-0)"),
                         ft.Text(f"Один из ваших номеров телефона {phoneNumber}, и один из ваших е-мейлов {email}"),
+                            ft.Image(
+                                src="https://sun9-74.userapi.com/impg/F0G0xDCHnoLSWySFmUB62N-ef1QPWZ3q6LkaIA/43lWLgXZN0Y.jpg?size=1215x2160&quality=95&sign=f4e2490312579d8fe0788a6e05985e5f&type=album",
+                                width=300,
+                                height=300,
+                                fit=ft.ImageFit.SCALE_DOWN,
+                                repeat=ft.ImageRepeat.NO_REPEAT,
+                                border_radius=ft.border_radius.all(10),
+                            ),
                         ft.FilledButton(text='Проверить ссылку', on_click=seeTheLink, width=400),
                         ft.FilledButton(text='Назад', on_click=goBack,width=400)
                         ])
@@ -146,8 +139,6 @@ if __name__ == '__main__':
                     ft.dropdown.Option("Другая"),
                 ],
             )
-            luckPerc = ft.TextField(label='Введи свой процент удачи от 0 до 100')
-
             row = ft.Row(controls=(day, month, year))
 
             def btnClick(e):
@@ -157,14 +148,16 @@ if __name__ == '__main__':
                 else:
                     dateOfDeath = "через " + randomAge + ending
 
-                dateOfBirth = date(int(year.value), int(month.value), int(day.value))
-                dateToday = date.today()
-                daysAge = (dateToday - dateOfBirth).days
-                monthsAge = daysAge / 30.4375
-                yearsAge = daysAge / 365.25
-
                 currentTime = time.strftime("%H:%M:%S")
                 hoursNow, minsNow, secsNow = currentTime.rsplit(":")
+
+                dateOfBirth = date(int(year.value), int(month.value), int(day.value))
+                dateToday = date.today()
+                daysAge = (dateToday - dateOfBirth).days + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)
+                monthsAge = daysAge / 30.4375  + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/730.5
+                yearsAge = daysAge / 365.25 + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/8766
+
+
                 hoursAge = daysAge * 24 + int(hoursNow)
                 minsAge = hoursAge * 60 + int(minsNow)
                 secsAge = minsAge * 60 + int(secsNow)
@@ -172,12 +165,12 @@ if __name__ == '__main__':
                 Card = ft.Row(controls=[
                     ft.Column(controls=[
                         ft.Text(f"Вам:", size=30),
+                        ft.Text(f"{secsAge} секунд"),
+                        ft.Text(f"{minsAge} минут"),
+                        ft.Text(f"{hoursAge} часов"),
                         ft.Text(f"{daysAge} дней"),
                         ft.Text(f"{monthsAge} месяцев"),
                         ft.Text(f"{yearsAge} лет"),
-                        ft.Text(f"{hoursAge} часов"),
-                        ft.Text(f"{minsAge} минут"),
-                        ft.Text(f"{secsAge} секунд"),
                         ft.Text(f"Вы умрете {dateOfDeath}"),
                         ft.FilledButton(text='Назад', on_click=goBack, width=400)
                     ])
