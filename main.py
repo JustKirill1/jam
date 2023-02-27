@@ -231,7 +231,6 @@ if __name__ == '__main__':
 
                     page.add(Card)
                     time.sleep(1)
-                    print(stopLoop)
                     page.clean()
                 page.clean() #after loop stopped come back to app's page
                 createStart()
