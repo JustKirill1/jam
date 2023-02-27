@@ -216,12 +216,12 @@ if __name__ == '__main__':
                     Card = ft.Row(controls=[
                         ft.Column(controls=[
                             ft.Text(f"Вам:", size=30),
-                            ft.Text(f"{secsAge} секунд"),
-                            ft.Text(f"{minsAge} минут"),
-                            ft.Text(f"{hoursAge} часов"),
-                            ft.Text(f"{daysAge} дней"),
-                            ft.Text(f"{monthsAge} месяцев"),
-                            ft.Text(f"{yearsAge} лет"),
+                            ft.Text(f"{round(secsAge,0)} секунд"),
+                            ft.Text(f"{round(minsAge,2)} минут"),
+                            ft.Text(f"{round(hoursAge,3)} часов"),
+                            ft.Text(f"{round(daysAge,5)} дней"),
+                            ft.Text(f"{round(monthsAge,6)} месяцев"),
+                            ft.Text(f"{round(yearsAge,7)} лет"),
                             ft.Text(f"Вы умрете {dateOfDeath}"),
                             ft.Text(f"Ваша удача: {randomLuck}"),
                             ft.FilledButton(text='Назад', on_click=goBack, width=400)
