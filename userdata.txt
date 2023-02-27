@@ -1,0 +1,1 @@
+{"users": [{"user": "huy", "luck": "40", "age": "20"}, {"user": "hfd", "luck": "63", "age": "92"}, {"user": "1", "luck": 77, "age": "76"}]}

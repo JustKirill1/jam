@@ -6,12 +6,12 @@ import fc
 from datetime import date
 import time
 import os
-
+import json
 
 if __name__ == '__main__':
-    ending, randomLuck, randomAge = fc.deathLuck()
+    stopLoop = 0
     def main(page: ft.Page):
-        def firstApp(e):
+        def debtCalculatorApp(e): #event for button to create app's page
             page.clean()
             page.title = "Вычисление долга"
             debtField = ft.TextField(label='Какую сумму заняли?')
@@ -43,7 +43,7 @@ if __name__ == '__main__':
                     randomFact, randomUrl = fc.randomFactsFromHistory(historyData) #отображение рандомной страницы из истории
                     loginData = fc.makeDictFromLoginDataDB() #создание словаря из sql таблицы логинов
                     phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData) #нахождение номеров телефона и емейла в словаре логинов
-                    try:
+                    try: #random things from browser's history data
                         for sites in historyData:
                             print(f"{sites['title']},{sites['visit_count']}")
                             if sites['visit_count'] > m:
@@ -51,7 +51,7 @@ if __name__ == '__main__':
                         for sites in historyData:
                             if sites['visit_count'] == m:
                                 maxSite = f"Вы посещали {sites['title']} чаще всего, а именно {m} раз"
-                    except:
+                    except: #if nothing found - None
                         m = None
                         maxSite = None
                     debtValue = int(debtField.value)
@@ -123,8 +123,9 @@ if __name__ == '__main__':
 
             ) #Изначальное создание приложения
             createStartPage()
-        def secondApp(e):
+        def ageCalculatorApp(e):
             page.clean()
+            userName = ft.TextField(label='ФИО')
             day = ft.TextField(label='День рождения')
             global row
             page.title = "Узнай свой возраст"
@@ -142,77 +143,126 @@ if __name__ == '__main__':
             row = ft.Row(controls=(day, month, year))
 
             def btnClick(e):
+                global stopLoop
+                stopLoop = None #variable to stop the loop
                 page.clean()  # Убираем старые поля
+                class User:
+                    def __init__(self, user, luck, age):
+                        self.user = user
+                        self.luck = luck
+                        self.age = age
+
+                with open("userdata.txt", "r") as file: #Открытие файла
+                    userData = json.load(file)
+                check = None
+                for key, users in userData.items():
+                    for user in users:
+                        if str(userName.value) in user.values(): # проверка если пользователь уже существует
+                            checkedUser = user
+                            check = True
+                        elif check != True:
+                            check = False
+                if check == True:
+                    randomLuck = checkedUser["luck"]
+                    randomAge = checkedUser["age"]
+
+                else: #if user does not exist creating variables for him
+                    randomLuck = random.randint(1, 100) #finding luck
+                    endOfRange = int(100 * (randomLuck / 100))
+                    randomList = []
+                    for i in range(1, 100):
+                        a = random.randint(1, endOfRange)
+                        randomList.append(a)
+                    randomAge = str(random.choice(randomList)) #finding age
+                    userInit = User(userName.value, randomLuck, randomAge) #initialization of user
+                    for key, values in userData.items():
+                        values.append(userInit.__dict__)
+                    with open("userdata.txt", "w") as file: #writing new user
+                        json.dump(userData, file)
+
+                b = []
+                for i in randomAge: #find word ending
+                    b.append(i)
+                if int(b[-1]) == 0 or 5 <= int(b[-1]) <= 9:
+                    ending = " лет"
+                elif int(b[-1]) == 1:
+                    if str(b)[-2:] == 11:
+                        ending = " лет"
+                    else:
+                        ending = " год"
+                else:
+                    ending = " года"
+
                 if country.value == 'Другая':
                     dateOfDeath = 'в этом году'
                 else:
                     dateOfDeath = "через " + randomAge + ending
 
-                currentTime = time.strftime("%H:%M:%S")
-                hoursNow, minsNow, secsNow = currentTime.rsplit(":")
 
-                dateOfBirth = date(int(year.value), int(month.value), int(day.value))
-                dateToday = date.today()
-                daysAge = (dateToday - dateOfBirth).days + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)
-                monthsAge = daysAge / 30.4375  + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/730.5
-                yearsAge = daysAge / 365.25 + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/8766
+                while stopLoop != 1: #dynamicly changing age
+                    currentTime = time.strftime("%H:%M:%S")
+                    hoursNow, minsNow, secsNow = currentTime.rsplit(":") #нахождение нынешних часов минут секунд
+
+                    dateOfBirth = date(int(year.value), int(month.value), int(day.value))
+                    dateToday = date.today()
+                    daysAge = (dateToday - dateOfBirth).days + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)
+                    monthsAge = daysAge / 30.4375  + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/730.5
+                    yearsAge = daysAge / 365.25 + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/8766
 
 
-                hoursAge = daysAge * 24 + int(hoursNow)
-                minsAge = hoursAge * 60 + int(minsNow)
-                secsAge = minsAge * 60 + int(secsNow)
+                    hoursAge = daysAge * 24 + int(hoursNow)
+                    minsAge = hoursAge * 60 + int(minsNow)
+                    secsAge = minsAge * 60 + int(secsNow)
+                    Card = ft.Row(controls=[
+                        ft.Column(controls=[
+                            ft.Text(f"Вам:", size=30),
+                            ft.Text(f"{secsAge} секунд"),
+                            ft.Text(f"{minsAge} минут"),
+                            ft.Text(f"{hoursAge} часов"),
+                            ft.Text(f"{daysAge} дней"),
+                            ft.Text(f"{monthsAge} месяцев"),
+                            ft.Text(f"{yearsAge} лет"),
+                            ft.Text(f"Вы умрете {dateOfDeath}"),
+                            ft.Text(f"Ваша удача: {randomLuck}"),
+                            ft.FilledButton(text='Назад', on_click=goBack, width=400)
+                        ])
 
-                Card = ft.Row(controls=[
-                    ft.Column(controls=[
-                        ft.Text(f"Вам:", size=30),
-                        ft.Text(f"{secsAge} секунд"),
-                        ft.Text(f"{minsAge} минут"),
-                        ft.Text(f"{hoursAge} часов"),
-                        ft.Text(f"{daysAge} дней"),
-                        ft.Text(f"{monthsAge} месяцев"),
-                        ft.Text(f"{yearsAge} лет"),
-                        ft.Text(f"Вы умрете {dateOfDeath}"),
-                        ft.FilledButton(text='Назад', on_click=goBack, width=400)
-                    ])
+                    ], alignment=ft.MainAxisAlignment.CENTER)
 
-                ], alignment=ft.MainAxisAlignment.CENTER)
-
-                page.add(Card)
-                # Добавляем текст и кнопку
-
+                    page.add(Card)
+                    time.sleep(1)
+                    print(stopLoop)
+                    page.clean()
+                page.clean() #after loop stopped come back to app's page
+                createStart()
             btn = ft.ElevatedButton(text="Готово", on_click=btnClick)
 
-            # Это стартовая кнопка ибо её надо было определить
-
             def goBack(e):
-                page.clean()
-                createStart()
+                global stopLoop
+                stopLoop = 1
 
-            # Кнопка назад
             btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
 
             def createStart():
-                page.add(
-                    ft.ListView(
-                        [
-                            ft.Container(country, padding=5),
-                            ft.Text(f"Ваша удача составляет: {randomLuck}"),
-                            ft.Container(content=row, width=800, padding=5),
-                            ft.Container(btn, padding=2),
-                            ft.Container(btnBack, padding=2),
+                    page.add(
+                        ft.ListView(
+                            [
+                                ft.Container(userName, padding=5),
+                                ft.Container(country, padding=5),
+                                ft.Container(content=row, width=800, padding=5),
+                                ft.Container(btn, padding=2),
+                                ft.Container(btnBack, padding=2),
 
-                        ],
+                            ],
+                        )
                     )
-
-                )  # Изначальное создание приложения
-
             createStart()
 
-        def mainPage(e):
+        def mainPage(e): #button event to come back to main page with buttons to other pages
             page.clean()
             page.title = "Главная страница"
-            btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=firstApp)
-            btnSPage = ft.ElevatedButton(text="Age calculator", on_click=secondApp)
+            btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
+            btnSPage = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
             page.add(
                 ft.ListView(
                     [ft.Row(controls=[
@@ -221,8 +271,8 @@ if __name__ == '__main__':
                      ])]))
 
         page.title = "Главная страница"
-        btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=firstApp)
-        btnSPage = ft.ElevatedButton(text="Age calculator", on_click=secondApp)
+        btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
+        btnSPage = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
         page.add(
             ft.ListView(
                 [ft.Row(controls=[
