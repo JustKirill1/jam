@@ -228,3 +228,89 @@ def randomFactsFromHistory(var1):
         randomFact = None
         randomUrl = None
     return randomFact, randomUrl
+def minEnding(minutes):
+    if 2 <= int(minutes) % 10 <= 4:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'минут'
+        else:
+            ending = 'минуты'
+    elif 5 <= int(minutes) % 10 <= 9 or int(minutes) % 10 == 0:
+        ending = 'минут'
+    else:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'минут'
+        else:
+            ending = 'минута'
+    return ending
+def secEnding(minutes):
+    if 2 <= int(minutes) % 10 <= 4:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'секунд'
+        else:
+            ending = 'секунды'
+    elif 5 <= int(minutes) % 10 <= 9 or int(minutes) % 10 == 0:
+        ending = 'секунд'
+    else:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'секунд'
+        else:
+            ending = 'секунда'
+    return ending
+def hourEnding(hours):
+    if 2 <= int(hours) % 10 <= 4:
+        if 10 <= int(hours) % 100 <= 20:
+            ending = 'часов'
+        else:
+            ending = 'часа'
+    elif 5 <= int(hours) % 10 <= 9 or int(hours) % 10 == 0:
+        ending = 'часов'
+    else:
+        if 10 <= int(hours) % 100 <= 20:
+            ending = 'часов'
+        else:
+            ending = 'час'
+    return ending
+def daysEnding(days):
+    if 2 <= int(days) % 10 <= 4:
+        if 10 <= int(days) % 100 <= 20:
+            ending = 'дней'
+        else:
+            ending = 'дня'
+    elif 5 <= int(days) % 10 <= 9 or int(days) % 10 == 0:
+        ending = 'дней'
+    else:
+        if 10 <= int(days) % 100 <= 20:
+            ending = 'дней'
+        else:
+            ending = 'день'
+    return ending
+def monthEnding(months):
+    if 2 <= int(months) % 10 <= 4:
+        if 10 <= int(months) % 100 <= 20:
+            ending = 'месяцев'
+        else:
+            ending = 'месяца'
+    elif 5 <= int(months) % 10 <= 9 or int(months) % 10 == 0:
+        ending = 'месяцев'
+    else:
+        if 10 <= int(months) % 100 <= 20:
+            ending = 'месяцев'
+        else:
+            ending = 'месяц'
+    return ending
+
+
+def ageEnding(randomAge):
+    b = []
+    for i in str(int(randomAge)):  # find word ending
+        b.append(i)
+    if int(b[-1]) == 0 or 5 <= int(b[-1]) <= 9:
+        ending = " лет"
+    elif int(b[-1]) == 1:
+        if str(b)[-2:] == 11:
+            ending = " лет"
+        else:
+            ending = " год"
+    else:
+        ending = " года"
+    return ending

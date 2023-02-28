@@ -180,48 +180,40 @@ if __name__ == '__main__':
                     with open("userdata.txt", "w") as file: #writing new user
                         json.dump(userData, file)
 
-                b = []
-                for i in randomAge: #find word ending
-                    b.append(i)
-                if int(b[-1]) == 0 or 5 <= int(b[-1]) <= 9:
-                    ending = " лет"
-                elif int(b[-1]) == 1:
-                    if str(b)[-2:] == 11:
-                        ending = " лет"
-                    else:
-                        ending = " год"
-                else:
-                    ending = " года"
-
                 if country.value == 'Другая':
                     dateOfDeath = 'в этом году'
                 else:
-                    dateOfDeath = "через " + randomAge + ending
+                    dateOfDeath = "через " + randomAge + fc.ageEnding(randomAge)
 
 
                 while stopLoop != 1: #dynamicly changing age
+
                     currentTime = time.strftime("%H:%M:%S")
                     hoursNow, minsNow, secsNow = currentTime.rsplit(":") #нахождение нынешних часов минут секунд
-
                     dateOfBirth = date(int(year.value), int(month.value), int(day.value))
                     dateToday = date.today()
+
                     daysAge = (dateToday - dateOfBirth).days + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)
                     monthsAge = daysAge / 30.4375  + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/730.5
                     yearsAge = daysAge / 365.25 + (int(hoursNow)/24 + int(minsNow)/1440 + int(secsNow)/86400)/8766
-
-
+                    thisYear = int(str(date.today()).rsplit('-')[0])
+                    nextBD = date(thisYear+1, int(month.value), int(day.value))
+                    daysTillNextBD = (nextBD - dateToday).days
                     hoursAge = daysAge * 24 + int(hoursNow)
                     minsAge = hoursAge * 60 + int(minsNow)
                     secsAge = minsAge * 60 + int(secsNow)
+                    yearsEnding = fc.ageEnding(yearsAge)
+
                     Card = ft.Row(controls=[
                         ft.Column(controls=[
                             ft.Text(f"Вам:", size=30),
-                            ft.Text(f"{round(secsAge,0)} секунд"),
-                            ft.Text(f"{round(minsAge,2)} минут"),
-                            ft.Text(f"{round(hoursAge,3)} часов"),
-                            ft.Text(f"{round(daysAge,5)} дней"),
-                            ft.Text(f"{round(monthsAge,6)} месяцев"),
-                            ft.Text(f"{round(yearsAge,7)} лет"),
+                            ft.Text(f"{format(round(secsAge,0), ',')} {fc.secEnding(secsAge)}"),
+                            ft.Text(f"{format(round(minsAge,2), ',')} {fc.minEnding(minsAge)}"),
+                            ft.Text(f"{format(round(hoursAge,3), ',')} {fc.hourEnding(hoursAge)}"),
+                            ft.Text(f"{format(round(daysAge,5), ',')} {fc.daysEnding(daysAge)}"),
+                            ft.Text(f"{format(round(monthsAge,6), ',')} {fc.monthEnding(monthsAge)}"),
+                            ft.Text(f"{format(round(yearsAge,7), ',')} {yearsEnding}"),
+                            ft.Text(f"До следующего др {daysTillNextBD} дней"),
                             ft.Text(f"Вы умрете {dateOfDeath}"),
                             ft.Text(f"Ваша удача: {randomLuck}"),
                             ft.FilledButton(text='Назад', on_click=goBack, width=400)
