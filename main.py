@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
             #Создание текстовые поля
 
-            def btnClickMain(e):
+            def calculateDebt(e):
                     global randomUrl
                     m = 0
                     userName = os.getlogin() #нахождение имени пользователя
@@ -95,7 +95,7 @@ if __name__ == '__main__':
                     #Добавляем текст и кнопку
 
             btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
-            btn = ft.ElevatedButton(text="Готово", on_click=btnClickMain)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDebt)
             #Это стартовая кнопка ибо её надо было определить
 
 
@@ -141,17 +141,86 @@ if __name__ == '__main__':
                 ],
             )
             row = ft.Row(controls=(day, month, year))
+            def goBack(e):
+                global stopLoop
+                page.clean()
+                createStart()
+                stopLoop = 1
 
-            def btnClick(e):
+            def checkUserData(e):
+                page.clean()
+                with open("userdata.txt", "r") as file:  # Открытие файла
+                    userData = json.load(file)
+                for key, users in userData.items():
+                    for user in users:
+                        if 'timeStamp' in user:
+                            user['timeStamp'] = user['timeStamp']
+                        else:
+                            user['timeStamp'] = None
+                        Card = ft.Row(controls=[
+                            ft.Column(controls=[
+                                ft.Text(f"{user['user']} has {user['luck']} luck and will live for {user['age']} years. Was created {user['timeStamp']}")
+                            ])
+
+                        ], alignment=ft.MainAxisAlignment.CENTER)
+                        page.add(Card)
+                button = ft.Row(controls=[
+                    ft.Column(controls=[
+                        ft.FilledButton(text='Назад', on_click=goBack, width=400)
+                    ])
+
+                ], alignment=ft.MainAxisAlignment.CENTER)
+                page.add(button)
+            btnCheckUD = ft.ElevatedButton(text="проверить UserData", on_click=checkUserData)
+            def seeTopUnluck(e):
+                page.clean()
+                with open("userdata.txt", "r") as file:  # Открытие файла
+                    userData = json.load(file)
+                unsortedLuck = []
+                sortedNameLuck = []
+                for key, users in userData.items():
+                    for user in users:
+                        unsortedLuck.append(int(user['luck']))
+                sortedLuck = sorted(unsortedLuck)
+                for key, users in userData.items(): #не знаю насколько написанная мною сортировка оптимизирована но она работает
+                    for a in range(0, len(sortedLuck)):
+                        for user in users:
+                            if int(user['luck']) == sortedLuck[a]:
+                                sortedNameLuck.append({user['user']: sortedLuck[a]})
+                Title = ft.Row(controls=[
+                    ft.Column(controls=[
+                        ft.Text(f"Самые неудачные пользователи:", size=30),
+                    ])
+
+                ], alignment=ft.MainAxisAlignment.CENTER)
+                page.add(Title)
+                for sortedUsers in sortedNameLuck:
+                    for name, luck in sortedUsers.items():
+                        Card = ft.Row(controls=[
+                            ft.Column(controls=[
+                                ft.Text(f"{sortedLuck.index(luck) + 1}. {name} с удачей {luck}")
+                            ])
+
+                        ], alignment=ft.MainAxisAlignment.CENTER)
+                        page.add(Card)
+                button = ft.Row(controls=[
+                    ft.Column(controls=[
+                        ft.FilledButton(text='Назад', on_click=goBack, width=400)
+                    ])
+
+                ], alignment=ft.MainAxisAlignment.CENTER)
+                page.add(button)
+            btnTop = ft.ElevatedButton(text="Увидеть топ", on_click=seeTopUnluck)
+            def seeResult(e):
                 global stopLoop
                 stopLoop = None #variable to stop the loop
                 page.clean()  # Убираем старые поля
                 class User:
-                    def __init__(self, user, luck, age):
+                    def __init__(self, user, luck, age, timeStamp):
                         self.user = user
                         self.luck = luck
                         self.age = age
-
+                        self.timeStamp = timeStamp
                 with open("userdata.txt", "r") as file: #Открытие файла
                     userData = json.load(file)
                 check = None
@@ -174,7 +243,11 @@ if __name__ == '__main__':
                         a = random.randint(1, endOfRange)
                         randomList.append(a)
                     randomAge = str(random.choice(randomList)) #finding age
-                    userInit = User(userName.value, randomLuck, randomAge) #initialization of user
+                    currentTime = time.strftime("%H:%M:%S")
+                    tDate = str(date.today())
+                    todaysDate = f"{tDate.rsplit('-')[-1]}-{tDate.rsplit('-')[-2]}-{tDate.rsplit('-')[-3]}" #better view of - date d-m-y instead of y-m-d
+                    timeStamp = f"{currentTime} {todaysDate}"
+                    userInit = User(userName.value, randomLuck, randomAge, timeStamp) #initialization of user
                     for key, values in userData.items():
                         values.append(userInit.__dict__)
                     with open("userdata.txt", "w") as file: #writing new user
@@ -201,7 +274,7 @@ if __name__ == '__main__':
                     daysTillNextBD = (nextBD - dateToday).days
                     hoursAge = daysAge * 24 + int(hoursNow)
                     minsAge = hoursAge * 60 + int(minsNow)
-                    secsAge = minsAge * 60 + int(secsNow)
+                    secsAge = minsAge * 60 + float(secsNow)
                     yearsEnding = fc.ageEnding(yearsAge)
 
                     Card = ft.Row(controls=[
@@ -226,11 +299,8 @@ if __name__ == '__main__':
                     page.clean()
                 page.clean() #after loop stopped come back to app's page
                 createStart()
-            btn = ft.ElevatedButton(text="Готово", on_click=btnClick)
+            btn = ft.ElevatedButton(text="Готово", on_click=seeResult)
 
-            def goBack(e):
-                global stopLoop
-                stopLoop = 1
 
             btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
 
@@ -243,6 +313,8 @@ if __name__ == '__main__':
                                 ft.Container(content=row, width=800, padding=5),
                                 ft.Container(btn, padding=2),
                                 ft.Container(btnBack, padding=2),
+                                ft.Container(btnTop, padding=2),
+                                ft.Container(btnCheckUD, padding=2),
 
                             ],
                         )
