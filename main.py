@@ -320,26 +320,128 @@ if __name__ == '__main__':
                         )
                     )
             createStart()
+        def EgeCalculatorApp(e): #event for button to create app's page
+            page.clean()
+            page.title = "Сколько осталось до ЕГЭ"
+            egeSubject = ft.Dropdown(
+                label='Какой предмет интересует',
+                width=100,
+                options=[
+                    ft.dropdown.Option("География"),
+                    ft.dropdown.Option("Литература"),
+                    ft.dropdown.Option("Химия"),
+                    ft.dropdown.Option("Русский язык"),
+                    ft.dropdown.Option("Математика базовый уровень"),
+                    ft.dropdown.Option("Математика профильный уровень"),
+                    ft.dropdown.Option("История"),
+                    ft.dropdown.Option("Физика"),
+                    ft.dropdown.Option("Обществознание"),
+                    ft.dropdown.Option("Биология"),
+                    ft.dropdown.Option("Иностранные языки (Письменная часть)"),
+                    ft.dropdown.Option("Иностранные языки (Устная часть)"),
+                    ft.dropdown.Option("Информатика"),
+                ],
+            )
+            #Создание текстовые поля
 
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                print(egeSubject.value)
+                if str(egeSubject.value) == 'География':
+                    subjectWord = 'географии'
+                    daysTillEge = (date(2023, 5, 26) - date.today()).days
+                elif str(egeSubject.value) == 'Литература':
+                    subjectWord = 'литературы'
+                    daysTillEge = (date(2023, 5, 26) - date.today()).days
+                elif str(egeSubject.value) == 'Химия':
+                    subjectWord = 'химии'
+                    daysTillEge = (date(2023, 5, 26) - date.today()).days
+                elif str(egeSubject.value) == 'Русский язык':
+                    subjectWord = 'русского языка'
+                    daysTillEge = (date(2023, 5, 29) - date.today()).days
+                elif str(egeSubject.value) == 'Математика базовый уровень':
+                    subjectWord = 'математика базового уровня'
+                    daysTillEge = (date(2023, 6, 1) - date.today()).days
+                elif str(egeSubject.value) == 'Математика профильный уровень':
+                    subjectWord = 'математики профильного уровня'
+                    daysTillEge = (date(2023, 6, 1) - date.today()).days
+                elif str(egeSubject.value) == 'История':
+                    subjectWord = 'истории'
+                    daysTillEge = (date(2023, 6, 5) - date.today()).days
+                elif str(egeSubject.value) == 'Физика':
+                    subjectWord = 'физики'
+                    daysTillEge = (date(2023, 6, 5) - date.today()).days
+                elif str(egeSubject.value) == 'Обществознание':
+                    subjectWord = 'обществознанания'
+                    daysTillEge = (date(2023, 6, 5) - date.today()).days
+                elif str(egeSubject.value) == 'Биология':
+                    subjectWord = 'биологии'
+                    daysTillEge = (date(2023, 6, 13) - date.today()).days
+                elif str(egeSubject.value) == 'Иностранные языки (Письменная часть)':
+                    subjectWord = 'иностранных языков (Письменная часть)'
+                    daysTillEge = (date(2023, 6, 13) - date.today()).days
+                elif str(egeSubject.value) == 'Иностранные языки (Устная часть)':
+                    subjectWord = 'иностранных языков (Устная часть)'
+                    daysTillEge = (date(2023, 6, 16) - date.today()).days
+                elif str(egeSubject.value) == 'Информатика':
+                    subjectWord = 'информатики'
+                    daysTillEge = (date(2023, 6, 19) - date.today()).days
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.Text(f"До {subjectWord} {daysTillEge} {fc.daysEnding(daysTillEge)}", size=40),
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+
+            def createStartPage():
+                userName = os.getlogin()
+
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(content=egeSubject,width=800,padding=5),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+
+            ) #Изначальное создание приложения
+            createStartPage()
         def mainPage(e): #button event to come back to main page with buttons to other pages
             page.clean()
             page.title = "Главная страница"
-            btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
-            btnSPage = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
+            btnDebtCalc = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
+            btnAgeCalc = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
+            btnEgeCalc = ft.ElevatedButton(text="Ege calculator", on_click=EgeCalculatorApp)
             page.add(
                 ft.ListView(
                     [ft.Row(controls=[
-                     ft.Container(btnFPage, padding=2),
-                     ft.Container(btnSPage, padding=2),
+                     ft.Container(btnDebtCalc, padding=2),
+                     ft.Container(btnAgeCalc, padding=2),
+                    ft.Container(btnEgeCalc, padding=2),
                      ])]))
 
         page.title = "Главная страница"
         btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
         btnSPage = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
+        btnEgeCalc = ft.ElevatedButton(text="Ege calculator", on_click=EgeCalculatorApp)
         page.add(
             ft.ListView(
                 [ft.Row(controls=[
                     ft.Container(btnFPage, padding=2),
                     ft.Container(btnSPage, padding=2),
+                    ft.Container(btnEgeCalc, padding=2),
                 ])]))
     ft.app(target=main) #Запуск говна
