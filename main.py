@@ -1,5 +1,5 @@
 import random
-
+import openai
 import flet as ft
 import math
 import fc
@@ -386,9 +386,11 @@ if __name__ == '__main__':
                 elif str(egeSubject.value) == 'Информатика':
                     subjectWord = 'информатики'
                     daysTillEge = (date(2023, 6, 19) - date.today()).days
+                chatGptAnswer = fc.chatGptEge(egeSubject.value)
                 Card = ft.Row(controls=[
                     ft.Column(controls=[
                     ft.Text(f"До {subjectWord} {daysTillEge} {fc.daysEnding(daysTillEge)}", size=40),
+                    ft.Text(chatGptAnswer, size=14, width=300),
                     ft.FilledButton(text='Назад', on_click=goBack,width=400)
                     ])
 

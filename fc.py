@@ -5,6 +5,26 @@ import datetime
 import shutil
 import os
 import random
+import openai
+def chatGptEge(subject):
+    openai.api_key = "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"
+    model_engine = "text-davinci-003"
+    # задаем макс кол-во слов
+    max_tokens = 128
+
+    # генерируем ответ
+    completion = openai.Completion.create(
+        engine=model_engine,
+        prompt=f"Я сдаю {subject} на ЕГЭ",
+        max_tokens=1024,
+        temperature=0.5,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    # выводим ответ
+    return str(completion.choices[0].text)
 def whatIsNumber(dolg):
     numbers = {'1': 'тысяч',
                '2': 'миллион',
