@@ -390,7 +390,7 @@ if __name__ == '__main__':
                 Card = ft.Row(controls=[
                     ft.Column(controls=[
                     ft.Text(f"До {subjectWord} {daysTillEge} {fc.daysEnding(daysTillEge)}", size=40),
-                    ft.Text(chatGptAnswer, size=14, width=300),
+                    ft.Text(chatGptAnswer, size=14, width=400),
                     ft.FilledButton(text='Назад', on_click=goBack,width=400)
                     ])
 
