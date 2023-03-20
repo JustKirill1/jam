@@ -6,7 +6,7 @@ import shutil
 import os
 import random
 import openai
-def chatGptEge(subject):
+def chatGpt(question):
     openai.api_key = "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"
     model_engine = "text-davinci-003"
     # задаем макс кол-во слов
@@ -15,7 +15,7 @@ def chatGptEge(subject):
     # генерируем ответ
     completion = openai.Completion.create(
         engine=model_engine,
-        prompt=f"Я сдаю {subject} на ЕГЭ",
+        prompt=question,
         max_tokens=1024,
         temperature=0.5,
         top_p=1,

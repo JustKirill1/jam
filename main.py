@@ -1,6 +1,6 @@
 import random
-import openai
 import flet as ft
+import openai
 import math
 import fc
 from datetime import date
@@ -45,7 +45,6 @@ if __name__ == '__main__':
                     phoneNumber, email = fc.getLoginsFromLoginDataDB(loginData) #нахождение номеров телефона и емейла в словаре логинов
                     try: #random things from browser's history data
                         for sites in historyData:
-                            print(f"{sites['title']},{sites['visit_count']}")
                             if sites['visit_count'] > m:
                                 m = sites['visit_count']
                         for sites in historyData:
@@ -65,7 +64,7 @@ if __name__ == '__main__':
                     debtFormat = format(debt, ",") #форматиования долга с запятыми
                     debtLog = int(math.log10(debt)) #нахождение степени десятки для упрощенного отображения больших чисел
                     ezNumber = fc.whatIsNumber(debt) #нахождение названия числа
-
+                    chatGptAnswer = fc.chatGpt(f"Мой долг состовляет {debt} рублей")
                     page.clean() #Убираем старые поля
                     Card = ft.Row(controls=[
                         ft.Column(controls=[
@@ -77,14 +76,15 @@ if __name__ == '__main__':
                         ft.Text(f"{maxSite}"),
                         ft.Text(f"{randomFact} (UTC-0)"),
                         ft.Text(f"Один из ваших номеров телефона {phoneNumber}, и один из ваших е-мейлов {email}"),
-                            ft.Image(
-                                src="https://sun9-74.userapi.com/impg/F0G0xDCHnoLSWySFmUB62N-ef1QPWZ3q6LkaIA/43lWLgXZN0Y.jpg?size=1215x2160&quality=95&sign=f4e2490312579d8fe0788a6e05985e5f&type=album",
-                                width=300,
-                                height=300,
-                                fit=ft.ImageFit.SCALE_DOWN,
-                                repeat=ft.ImageRepeat.NO_REPEAT,
-                                border_radius=ft.border_radius.all(10),
-                            ),
+                        ft.Text(chatGptAnswer,width=400),
+                        ft.Image(
+                            src="https://sun9-74.userapi.com/impg/F0G0xDCHnoLSWySFmUB62N-ef1QPWZ3q6LkaIA/43lWLgXZN0Y.jpg?size=1215x2160&quality=95&sign=f4e2490312579d8fe0788a6e05985e5f&type=album",
+                            width=300,
+                            height=300,
+                            fit=ft.ImageFit.SCALE_DOWN,
+                            repeat=ft.ImageRepeat.NO_REPEAT,
+                            border_radius=ft.border_radius.all(10),
+                        ),
                         ft.FilledButton(text='Проверить ссылку', on_click=seeTheLink, width=400),
                         ft.FilledButton(text='Назад', on_click=goBack,width=400)
                         ])
@@ -257,7 +257,7 @@ if __name__ == '__main__':
                     dateOfDeath = 'в этом году'
                 else:
                     dateOfDeath = "через " + randomAge + fc.ageEnding(randomAge)
-
+                    chatGptAnswer = fc.chatGpt(f"Я знаю что я умру через {randomAge}")
 
                 while stopLoop != 1: #dynamicly changing age
 
@@ -289,6 +289,7 @@ if __name__ == '__main__':
                             ft.Text(f"До следующего др {daysTillNextBD} дней"),
                             ft.Text(f"Вы умрете {dateOfDeath}"),
                             ft.Text(f"Ваша удача: {randomLuck}"),
+                            ft.Text(chatGptAnswer),
                             ft.FilledButton(text='Назад', on_click=goBack, width=400)
                         ])
 
@@ -312,9 +313,10 @@ if __name__ == '__main__':
                                 ft.Container(country, padding=5),
                                 ft.Container(content=row, width=800, padding=5),
                                 ft.Container(btn, padding=2),
-                                ft.Container(btnBack, padding=2),
                                 ft.Container(btnTop, padding=2),
                                 ft.Container(btnCheckUD, padding=2),
+                                ft.Container(btnBack, padding=2),
+
 
                             ],
                         )
@@ -386,7 +388,7 @@ if __name__ == '__main__':
                 elif str(egeSubject.value) == 'Информатика':
                     subjectWord = 'информатики'
                     daysTillEge = (date(2023, 6, 19) - date.today()).days
-                chatGptAnswer = fc.chatGptEge(egeSubject.value)
+                chatGptAnswer = fc.chatGpt(f"Я сдаю {egeSubject.value} на ЕГЭ")
                 Card = ft.Row(controls=[
                     ft.Column(controls=[
                     ft.Text(f"До {subjectWord} {daysTillEge} {fc.daysEnding(daysTillEge)}", size=40),
@@ -421,29 +423,282 @@ if __name__ == '__main__':
 
             ) #Изначальное создание приложения
             createStartPage()
+
+        def fourthApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
+        def fifthApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
+        def sixthApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
+        def seventhApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
+        def eighthApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
+        def ninethApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
+        def tenthApp(e): #event for button to create app's page
+            page.clean()
+            def calculateDays(e):
+                page.clean()  # Убираем старые поля
+                Card = ft.Row(controls=[
+                    ft.Column(controls=[
+                    ft.FilledButton(text='Назад', on_click=goBack,width=400)
+                    ])
+
+                ], alignment = ft.MainAxisAlignment.CENTER)
+                page.add(Card)
+            btnBack = ft.ElevatedButton(text="На главную", on_click=mainPage)
+            btn = ft.ElevatedButton(text="Готово", on_click=calculateDays)
+            #Это стартовая кнопка ибо её надо было определить
+
+
+            def goBack(e):
+                page.clean()
+                createStartPage()
+            #Кнопка назад
+            def createStartPage():
+                userName = os.getlogin()
+                page.add(
+                        ft.ListView(
+                            [ft.Row(controls=[ft.Text(f"{userName}, введите данные",size=48)], alignment= ft.MainAxisAlignment.CENTER),
+                            ft.Container(btn,padding=2),
+                            ft.Container(btnBack, padding=2),
+
+                             ],
+                        )
+            ) #Изначальное создание приложения
+            createStartPage()
         def mainPage(e): #button event to come back to main page with buttons to other pages
             page.clean()
             page.title = "Главная страница"
             btnDebtCalc = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
             btnAgeCalc = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
             btnEgeCalc = ft.ElevatedButton(text="Ege calculator", on_click=EgeCalculatorApp)
+            btn4app = ft.ElevatedButton(text="4th app", on_click=fourthApp)
+            btn5app = ft.ElevatedButton(text="5th app", on_click=fifthApp)
+            btn6app = ft.ElevatedButton(text="6th app", on_click=sixthApp)
+            btn7app = ft.ElevatedButton(text="7th app", on_click=seventhApp)
+            btn8app = ft.ElevatedButton(text="8th app", on_click=eighthApp)
+            btn9app = ft.ElevatedButton(text="9th app", on_click=ninethApp)
+            btn10app = ft.ElevatedButton(text="10th app", on_click=tenthApp)
             page.add(
                 ft.ListView(
                     [ft.Row(controls=[
                      ft.Container(btnDebtCalc, padding=2),
                      ft.Container(btnAgeCalc, padding=2),
                     ft.Container(btnEgeCalc, padding=2),
+                        ft.Container(btn4app, padding=2),
+                        ft.Container(btn5app, padding=2),
+                        ft.Container(btn6app, padding=2),
+                        ft.Container(btn7app, padding=2),
+                        ft.Container(btn8app, padding=2),
+                        ft.Container(btn9app, padding=2),
+                        ft.Container(btn10app, padding=2),
                      ])]))
 
         page.title = "Главная страница"
         btnFPage = ft.ElevatedButton(text="Debt calculator", on_click=debtCalculatorApp)
         btnSPage = ft.ElevatedButton(text="Age calculator", on_click=ageCalculatorApp)
         btnEgeCalc = ft.ElevatedButton(text="Ege calculator", on_click=EgeCalculatorApp)
+        btn4app = ft.ElevatedButton(text="4th app", on_click=fourthApp)
+        btn5app = ft.ElevatedButton(text="5th app", on_click=fifthApp)
+        btn6app = ft.ElevatedButton(text="6th app", on_click=sixthApp)
+        btn7app = ft.ElevatedButton(text="7th app", on_click=seventhApp)
+        btn8app = ft.ElevatedButton(text="8th app", on_click=eighthApp)
+        btn9app = ft.ElevatedButton(text="9th app", on_click=ninethApp)
+        btn10app = ft.ElevatedButton(text="10th app", on_click=tenthApp)
         page.add(
             ft.ListView(
                 [ft.Row(controls=[
                     ft.Container(btnFPage, padding=2),
                     ft.Container(btnSPage, padding=2),
                     ft.Container(btnEgeCalc, padding=2),
+                    ft.Container(btn4app, padding=2),
+                    ft.Container(btn5app, padding=2),
+                    ft.Container(btn6app, padding=2),
+                    ft.Container(btn7app, padding=2),
+                    ft.Container(btn8app, padding=2),
+                    ft.Container(btn9app, padding=2),
+                    ft.Container(btn10app, padding=2),
                 ])]))
     ft.app(target=main) #Запуск говна
