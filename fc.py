@@ -5,6 +5,26 @@ import datetime
 import shutil
 import os
 import random
+import openai
+def chatGpt(question):
+    openai.api_key = "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"
+    model_engine = "text-davinci-003"
+    # задаем макс кол-во слов
+    max_tokens = 128
+
+    # генерируем ответ
+    completion = openai.Completion.create(
+        engine=model_engine,
+        prompt=question,
+        max_tokens=1024,
+        temperature=0.5,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    # выводим ответ
+    return str(completion.choices[0].text)
 def whatIsNumber(dolg):
     numbers = {'1': 'тысяч',
                '2': 'миллион',
@@ -107,12 +127,12 @@ def whatIsNumber(dolg):
                '99': 'октононагинтиллион',
                '100': 'новемнонагинтиллион',
                '101': 'центиллион'}
-    symbolAmount = dict(Counter("{:,}".format(dolg)))
+    symbolAmount = dict(Counter("{:,}".format(dolg))) #считает сколько каких символов в dolg
     if ',' in symbolAmount:
-        digitPlace = symbolAmount[',']
+        digitPlace = symbolAmount[','] #show how many commas in word
     else:
         digitPlace = 0
-    if 2 <= int(dolg / int(1000 ** digitPlace)) % 10 <= 4:
+    if 2 <= int(dolg / int(1000 ** digitPlace)) % 10 <= 4: #get word ending
         if 10 <= int(dolg / int(1000 ** digitPlace)) % 100 <= 20:
             ending = 'ов'
         else:
@@ -142,15 +162,15 @@ def whatIsNumber(dolg):
     return b
 def dayCounting(timeType, timeAmount):
     if timeType.value == 'Года':
-        timeAmount = float(timeAmount.value) * 365.25
+        timeAmount = float(timeAmount.value) * 365.25 #get days from years
     if timeType.value == 'Месяцы':
-        timeAmount = float(timeAmount.value) * 30.4375
+        timeAmount = float(timeAmount.value) * 30.4375 #get days from months
     if timeType.value == 'Дни':
         timeAmount = float(timeAmount.value)
     return timeAmount
 def getDays(dates):
     date1, date2 = dates.rsplit(";")
-    return (date2 - date1).days
+    return (date2 - date1).days #get days from two dates
 def dateFromWebkit(webkit_timestamp):
     epoch_start = datetime.datetime(1601,1,1)
     delta = datetime.timedelta(microseconds=int(webkit_timestamp))
@@ -158,23 +178,23 @@ def dateFromWebkit(webkit_timestamp):
 def getHistoryDB():
     try:
         original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\History'
-        target = str(os.path.abspath(os.curdir)) + r'\History.db'
+        target = str(os.path.abspath(os.curdir)) + r'\History.db' #get history db from google chrome
         shutil.copy2(original, target)
     except:
         try:
-            original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\History'
+            original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\History' #get history db from opera gx
             target = str(os.path.abspath(os.curdir)) + r'\History.db'
             shutil.copy2(original, target)
         except:
             print("Браузер не поддерживается")
 def getLoginDataDB():
     try:
-        original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\Login Data'
+        original = os.getenv('localappdata') + r'\Google\Chrome\User Data\Default\Login Data' #get login db from google chrome
         target = str(os.path.abspath(os.curdir)) + r'\Login Data.db'
         shutil.copy2(original, target)
     except:
         try:
-            original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\Login Data'
+            original = os.getenv('appdata') + r'\Opera Software\Opera GX Stable\Login Data' #get login db from opera gx
             target = str(os.path.abspath(os.curdir)) + r'\Login Data.db'
             shutil.copy2(original, target)
         except:
@@ -186,7 +206,7 @@ def dictFactory(cursor, row):
     return d
 def makeDictFromHistoryDB():
     try:
-        con = sql.connect('History.db')
+        con = sql.connect('History.db') #work with sql db
         con.row_factory = dictFactory
         cur = con.cursor()
         cur.execute("select * from urls")
@@ -210,10 +230,9 @@ def getLoginsFromLoginDataDB(logins):
         phoneNumber = []
         email = []
         for sites in logins:
-            # print(sites)
-            if '+7' in sites['username_value'] is not None:
+            if '+7' in sites['username_value'] is not None: #find phone number
                 phoneNumber.append(sites['username_value'])
-            if '@' in sites['username_value'] is not None:
+            if '@' in sites['username_value'] is not None: #find email address
                 email.append(sites['username_value'])
         return random.choice(phoneNumber), random.choice(email)
     except TypeError:
@@ -221,24 +240,88 @@ def getLoginsFromLoginDataDB(logins):
         return phoneNumber, email
 def randomFactsFromHistory(var1):
     try:
-        randomSite = random.choice(var1)
+        randomSite = random.choice(var1) #random choice of site from history
         randomFact = f"Last time you visited {randomSite['title']}, was {dateFromWebkit(randomSite['last_visit_time'])}"
-        randomUrl = randomSite['url']
+        randomUrl = randomSite['url'] #get url of this random site
     except:
         randomFact = None
         randomUrl = None
     return randomFact, randomUrl
+def minEnding(minutes): #get word ending for minutes
+    if 2 <= int(minutes) % 10 <= 4:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'минут'
+        else:
+            ending = 'минуты'
+    elif 5 <= int(minutes) % 10 <= 9 or int(minutes) % 10 == 0:
+        ending = 'минут'
+    else:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'минут'
+        else:
+            ending = 'минута'
+    return ending
+def secEnding(minutes): #get word ending for seconds
+    if 2 <= int(minutes) % 10 <= 4:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'секунд'
+        else:
+            ending = 'секунды'
+    elif 5 <= int(minutes) % 10 <= 9 or int(minutes) % 10 == 0:
+        ending = 'секунд'
+    else:
+        if 10 <= int(minutes) % 100 <= 20:
+            ending = 'секунд'
+        else:
+            ending = 'секунда'
+    return ending
+def hourEnding(hours): #get word ending for hours
+    if 2 <= int(hours) % 10 <= 4:
+        if 10 <= int(hours) % 100 <= 20:
+            ending = 'часов'
+        else:
+            ending = 'часа'
+    elif 5 <= int(hours) % 10 <= 9 or int(hours) % 10 == 0:
+        ending = 'часов'
+    else:
+        if 10 <= int(hours) % 100 <= 20:
+            ending = 'часов'
+        else:
+            ending = 'час'
+    return ending
+def daysEnding(days): #get word ending for days
+    if 2 <= int(days) % 10 <= 4:
+        if 10 <= int(days) % 100 <= 20:
+            ending = 'дней'
+        else:
+            ending = 'дня'
+    elif 5 <= int(days) % 10 <= 9 or int(days) % 10 == 0:
+        ending = 'дней'
+    else:
+        if 10 <= int(days) % 100 <= 20:
+            ending = 'дней'
+        else:
+            ending = 'день'
+    return ending
+def monthEnding(months): #get word ending for motnhs
+    if 2 <= int(months) % 10 <= 4:
+        if 10 <= int(months) % 100 <= 20:
+            ending = 'месяцев'
+        else:
+            ending = 'месяца'
+    elif 5 <= int(months) % 10 <= 9 or int(months) % 10 == 0:
+        ending = 'месяцев'
+    else:
+        if 10 <= int(months) % 100 <= 20:
+            ending = 'месяцев'
+        else:
+            ending = 'месяц'
+    return ending
 
-def deathLuck():
-    randomLuck = random.randint(1, 100)
-    endOfRange = int(100 * (randomLuck / 100))
-    randomList = []
-    for i in range(1, 100):
-        a = random.randint(1, endOfRange)
-        randomList.append(a)
-    randomAge = str(random.choice(randomList))
+
+def ageEnding(randomAge): #get word ending for age
     b = []
-    for i in randomAge:
+    for i in str(int(randomAge)):
         b.append(i)
     if int(b[-1]) == 0 or 5 <= int(b[-1]) <= 9:
         ending = " лет"
@@ -249,4 +332,4 @@ def deathLuck():
             ending = " год"
     else:
         ending = " года"
-    return ending, randomLuck, randomAge
+    return ending
