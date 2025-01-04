@@ -1,14 +1,4 @@
-### Features
 
-- Хуйня;
-- Поебота;
-- Хуета;
-- Говно;
-
-
-# Some Shit App
-
-![](https://sun9-76.userapi.com/impg/iEa4CbxRR3-Ip5PxVmQ5oe1KY_rPHsfIIS97Mg/06wLsApF0Q4.jpg?size=640x640&quality=96&sign=290a248fcc955d762f48fc6c6fdc8408&type=album)
 
 ### Main Page
 
